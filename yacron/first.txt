@@ -1,1 +1,1 @@
-This is the first run of yacron. You may need change some settings in "~/.yacron", such as "email" and "password" in "yacron_xiami.py".
+This is the first run of yacron. You may need change some settings in "~/.yacron", such as "email" and "password" in "yacron_xiami.py". You <strong>must restart</strong> yacron after you make any changes.

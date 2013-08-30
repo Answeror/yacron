@@ -25,7 +25,7 @@ files = [(join(name), join(name)) for name in os.listdir('plugins') if name.ends
 
 setup(
     name='yacron',
-    version='0.1.0',
+    version=version.split('-')[0],
     packages=['yacron'],
     cmdclass=cmds,
     options={
