@@ -1,12 +1,16 @@
-import crython
 import logging
 import os
 import sys
-import imp
+import importlib
 import re
 from . import resources_rc
 from PySide import QtGui, QtCore
 from .const import VERSION
+
+
+this_dir = os.path.abspath(os.path.dirname(__file__))
+sys.path.insert(0, this_dir)
+import crython
 
 
 log = logging.getLogger('yacron')
@@ -27,13 +31,22 @@ def load_plugins(root=None):
     if root is None:
         root = os.path.join(os.path.expanduser('~'), '.yacron')
     if not os.path.exists(root):
-        os.makedirs(root)
+        import shutil
+        plugin_dir = os.path.join(this_dir, '..', 'plugins')
+        if not os.path.exists(plugin_dir):
+            plugin_dir = os.path.join(os.path.dirname(sys.executable), 'plugins')
+        if os.path.exists(plugin_dir):
+            shutil.copytree(plugin_dir, root)
+        else:
+            log.error('default plugin directory %s not found' % plugin_dir)
+            os.makedirs(root)
+    sys.path.insert(0, root)
     for filename in os.listdir(root):
-        ret = re.search(r'^yacron_(.+)\.py$', filename)
+        ret = re.search(r'^(yacron_(.+))\.py$', filename)
         if ret:
             name = ret.group(1)
             log.info('loading %s' % name)
-            imp.load_source(name, os.path.join(root, filename))
+            print(dir(importlib.import_module(name)))
 
 
 class Tray(QtGui.QSystemTrayIcon):

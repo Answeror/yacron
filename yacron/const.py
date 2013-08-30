@@ -1,5 +1,4 @@
 try:
-    import pkg_resources
-    VERSION = pkg_resources.require('yacron')[0].version
+    from .version import VERSION
 except:
     VERSION = 'unknown'

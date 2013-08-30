@@ -98,7 +98,7 @@ class QtUiBuild(Command, PySideUiBuild):
 
 QtUiBuild.ui_files = []
 QtUiBuild.qrc_files = [os.path.join(dir, f) \
-                for dir in ['.'] \
+                for dir in ['yacron'] \
                 for f in os.listdir(dir) if f.endswith('.qrc')]
 
 

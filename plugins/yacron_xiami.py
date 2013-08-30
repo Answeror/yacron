@@ -77,8 +77,8 @@ def parse(s):
     return ret.group(1) if ret else None
 
 
-#@crython.job(expr='@hourly')
-@crython.job(second='*/10')
+@crython.job(expr='@hourly')
+#@crython.job(second='*/10')
 def run():
     '''https://github.com/isombyt/xiamiCheckin/blob/master/main.py'''
     try:
