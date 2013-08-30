@@ -1,0 +1,9 @@
+*.swp
+*.pyc
+__pycache__/
+/dist*/
+/*.egg/
+/*.egg-info/
+/build/
+resources_rc.py
+Thumbs.db

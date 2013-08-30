@@ -1,0 +1,8 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file alias="tray.png">images/smile.png</file>
+        <file alias="taskbar.png">images/smile.png</file>
+        <file alias="about.txt">about.txt</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,4 @@
+<h1>yacron</h1>
+<p>version: %s</p>
+<p>Copyright &copy; 2013 <a href='mailto:answeror+yacron@gmail.com'>answeror</a></p>
+<p>Yet another cron.</p>
