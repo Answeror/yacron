@@ -10,17 +10,17 @@ uid_re = '/web/friends/id/([0-9]*)"'
 log = logging.getLogger('yacron.xiami')
 
 
+# change following lines
+email = 'answeror@gmail.com'
+password = '42'
+
+
 def make_opener():
     cookie = CookieJar()
     return build_opener(HTTPCookieProcessor(cookie))
 
 
-def user_info():
-    return 'answeror@gmail.com', 'vostro1400'
-
-
 def login(opener):
-    email, password = user_info()
     login_url = 'http://www.xiami.com/web/login'
     login_data = urlencode({
         'email': email,

@@ -41,6 +41,8 @@ setup(
         base='Win32GUI',
         targetName='yacron.exe',
         compress=True,
-        icon='yacron/images/smile.ico'
+        icon='yacron/images/smile.ico',
+        shortcutName='yacron',
+        shortcutDir='DesktopFolder'
     )]
 )

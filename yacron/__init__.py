@@ -37,6 +37,10 @@ def load_plugins(root=None):
             plugin_dir = os.path.join(os.path.dirname(sys.executable), 'plugins')
         if os.path.exists(plugin_dir):
             shutil.copytree(plugin_dir, root)
+            f = QtCore.QFile(':/first.txt')
+            if not f.open(QtCore.QFile.ReadOnly | QtCore.QFile.Text):
+                assert False, f.errorString()
+            QtGui.QMessageBox.information(None, 'first run', f.readAll().data().decode('utf-8'))
         else:
             log.error('default plugin directory %s not found' % plugin_dir)
             os.makedirs(root)
@@ -46,7 +50,7 @@ def load_plugins(root=None):
         if ret:
             name = ret.group(1)
             log.info('loading %s' % name)
-            print(dir(importlib.import_module(name)))
+            importlib.import_module(name)
 
 
 class Tray(QtGui.QSystemTrayIcon):
@@ -71,10 +75,6 @@ class Tray(QtGui.QSystemTrayIcon):
 
 def main():
     init_log()
-    if '-d' in sys.argv:
-        load_plugins(root='plugins')
-    else:
-        load_plugins()
     app = QtGui.QApplication(sys.argv)
     app.setOrganizationName('helanic')
     app.setOrganizationDomain('answeror.com')
@@ -84,5 +84,9 @@ def main():
     main = QtGui.QWidget()
     tray = Tray(QtGui.QIcon(':/tray.png'), main)
     tray.show()
+    if '-d' in sys.argv:
+        load_plugins(root='plugins')
+    else:
+        load_plugins()
     crython.tab.start()
     sys.exit(app.exec_())
