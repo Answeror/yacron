@@ -10,7 +10,7 @@ An auto checkin task of [xiami.com](http://xiami.com) is already included. You n
 
 ## Platform
 
-* Python 3.3.2
+* Python 3.3.2 32bit
 * cx-freeze==4.3.1
 * pyside==1.2.1
 
