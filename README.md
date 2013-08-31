@@ -6,6 +6,8 @@ An auto checkin task of [xiami.com](http://xiami.com) is already included. You n
 
 ## Downloads
 
+* [0.1.3](http://file.answeror.com/yacron-0.1.3-win32.msi)
+* [0.1.2](http://file.answeror.com/yacron-0.1.2-win32.msi)
 * [0.1.1](http://file.answeror.com/yacron-0.1.1-win32.msi)
 
 ## Platform
