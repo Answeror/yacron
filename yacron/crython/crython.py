@@ -17,6 +17,10 @@ DAY_ABBR = dict((v.lower(),k) for k,v in enumerate(calendar.day_abbr))      #(ex
 MON_NAME = dict((v.lower(),k) for k,v in enumerate(calendar.month_name))    #(ex: January, February, etc)
 MON_ABBR = dict((v.lower(),k) for k,v in enumerate(calendar.month_abbr))    #(ex: Jan, Feb, etc)
 PHRASES  = dict(list(DAY_NAME.items()) + list(DAY_ABBR.items()) + list(MON_NAME.items()) + list(MON_ABBR.items()))
+# MON_NAME and MON_ABBR contains ('', 0)
+# it will cause random behavior in sub_english_phrases
+if '' in PHRASES:
+    del PHRASES['']
 PHRASES_REGEX = re.compile('|'.join(list(PHRASES.keys())).lstrip('|'), flags=re.IGNORECASE)
 
 class CronField(object):
