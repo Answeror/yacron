@@ -17,3 +17,7 @@ An auto checkin task of [xiami.com](http://xiami.com) is already included. You n
 * pyside==1.2.1
 
 I've only tested it on win8 x64, but it should also runnable on linux and macos.
+
+## Acknowledgements
+
+The icon was designed by [semillon](http://doujin.bgm.tv/user/17414).
