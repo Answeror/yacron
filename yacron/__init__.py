@@ -1,11 +1,14 @@
 import logging
 import os
 import sys
+import imp
 import importlib
 import re
 from . import resources_rc
 from PySide import QtGui, QtCore
 from .const import VERSION
+from fs.osfs import OSFS
+from fs.watch import MODIFIED, CREATED
 
 
 this_dir = os.path.abspath(os.path.dirname(__file__))
@@ -27,30 +30,65 @@ def init_log():
     logging.getLogger().addHandler(soh)
 
 
-def load_plugins(root=None):
-    if root is None:
-        root = os.path.join(os.path.expanduser('~'), '.yacron')
-    if not os.path.exists(root):
-        import shutil
-        plugin_dir = os.path.join(this_dir, '..', 'plugins')
-        if not os.path.exists(plugin_dir):
-            plugin_dir = os.path.join(os.path.dirname(sys.executable), 'plugins')
-        if os.path.exists(plugin_dir):
-            shutil.copytree(plugin_dir, root)
-            f = QtCore.QFile(':/first.txt')
-            if not f.open(QtCore.QFile.ReadOnly | QtCore.QFile.Text):
-                assert False, f.errorString()
-            QtGui.QMessageBox.information(None, 'first run', f.readAll().data().decode('utf-8'))
-        else:
-            log.error('default plugin directory %s not found' % plugin_dir)
-            os.makedirs(root)
-    sys.path.insert(0, root)
-    for filename in os.listdir(root):
-        ret = re.search(r'^(yacron_(.+))\.py$', filename)
-        if ret:
-            name = ret.group(1)
-            log.info('loading %s' % name)
-            importlib.import_module(name)
+def md5(d):
+    import hashlib
+    m = hashlib.md5()
+    m.update(d)
+    return m.hexdigest()
+
+
+def fmd5(path):
+    with open(path, 'rb') as f:
+        return md5(f.read())
+
+
+class PluginManager(object):
+
+    def load(self, root=None):
+        if root is None:
+            root = os.path.join(os.path.expanduser('~'), '.yacron')
+        if not os.path.exists(root):
+            import shutil
+            plugin_dir = os.path.join(this_dir, '..', 'plugins')
+            if not os.path.exists(plugin_dir):
+                plugin_dir = os.path.join(os.path.dirname(sys.executable), 'plugins')
+            if os.path.exists(plugin_dir):
+                shutil.copytree(plugin_dir, root)
+                f = QtCore.QFile(':/first.txt')
+                if not f.open(QtCore.QFile.ReadOnly | QtCore.QFile.Text):
+                    assert False, f.errorString()
+                QtGui.QMessageBox.information(None, 'first run', f.readAll().data().decode('utf-8'))
+            else:
+                log.error('default plugin directory %s not found' % plugin_dir)
+                os.makedirs(root)
+
+        sys.path.insert(0, root)
+
+        mods = {}
+        for filename in os.listdir(root):
+            ret = re.search(r'^(yacron_(.+))\.py$', filename)
+            if ret:
+                name = ret.group(1)
+                log.info('loading %s' % name)
+                mods[name] = fmd5(os.path.join(root, filename)), importlib.import_module(name)
+
+        self.fs = OSFS(root)
+
+        @self.fs.add_watcher
+        def reload(e):
+            if type(e) in (MODIFIED, CREATED):
+                filename = os.path.basename(e.path)
+                ret = re.search(r'^(yacron_(.+))\.py$', filename)
+                if ret:
+                    name = ret.group(1)
+                    signature = fmd5(os.path.join(root, filename))
+                    if name in mods:
+                        if mods[name][0] != signature:
+                            log.info('reloading %s' % name)
+                            mods[name] = signature, imp.reload(mods[name][1])
+                    else:
+                        log.info('loading %s' % name)
+                        mods[name] = signature, importlib.import_module(name)
 
 
 class Tray(QtGui.QSystemTrayIcon):
@@ -84,9 +122,10 @@ def main():
     main = QtGui.QWidget()
     tray = Tray(QtGui.QIcon(':/tray.png'), main)
     tray.show()
+    pm = PluginManager()
     if '-d' in sys.argv:
-        load_plugins(root='plugins')
+        pm.load(root='plugins')
     else:
-        load_plugins()
+        pm.load()
     crython.tab.start()
     sys.exit(app.exec_())
